@@ -18,7 +18,6 @@ public class JsonParser {
 
         // Read and parse the JSON file
         Question[] qrr = parseJsonFile(filePath);
-        System.out.println(Arrays.toString(qrr));
     }
 
     public static Question[] parseJsonFile(String filePath) {
@@ -37,9 +36,7 @@ public class JsonParser {
 
         // Convert the JSON content to a string
         String json = jsonContent.toString();
-        // System.out.println(json);
         json = RemoveWhitespace.removeWhitespaceOutsideQuotes(json);
-        // System.out.println(json);
         // Parse the JSON content
         return parseJson(json);
     }
@@ -48,30 +45,20 @@ public class JsonParser {
         List<Question> questionArr = new ArrayList<>();
         // Remove surrounding curly braces
         json = json.trim().substring(1, json.length() - 1);
-        // System.out.println(json);
         // Split the JSON content by questions array
         String[] parts = json.split("\"questions\":\\[");
         if (parts.length < 2) {
             System.out.println("Invalid JSON format");
             throw new IllegalArgumentException("Invalid JSON format");
         }
-        System.out.println(Arrays.toString(parts));
 
         // Get the questions array
         String questionsJson = parts[1].substring(1, parts[1].length() - 2).trim();
-        System.out.println();
-        System.out.println("Questions JSON:");
-        System.out.println(questionsJson);
-        System.out.println();
+
 
         // Split questions array into individual questions
         String[] questionJsons = questionsJson.split("\\},\\{");
-        System.out.println();
-        System.out.println("Question JSONs:");
-        System.out.println(Arrays.toString(questionJsons));
-        System.out.println(questionJsons.length);
-        System.out.println(questionJsons[0]);
-        System.out.println();
+
 
         // Loop through each question
         for (String questionJson : questionJsons) {
@@ -87,9 +74,8 @@ public class JsonParser {
             Question question = parseQuestion(questionJson);
             if (question != null) {
                 // Store or use the question object as needed
-                System.out.println("Parsed question: " + question.question);
+                questionArr.add(question);
             }
-            questionArr.add(question);
         }
         return questionArr.toArray(new Question[0]);
     }
@@ -111,24 +97,18 @@ public class JsonParser {
 
         for (String field : fields) {
             // Split field into key and value
-            if (field.contains("options")) {
-                System.out.println("field: " + field);
-            }
             field = field.replace("[", "").replace("]", "").trim();
             String[] keyValue = field.split(":");
             if (keyValue.length < 2) {
                 String value = keyValue[0].replace("\"", "").trim();
-                options.add(field);
-                System.out.println("Invalid field: " + value);
+                options.add(value);
                 continue;
             }
 
             // Remove quotes and trim key and value
             String key = keyValue[0].replace("\"", "").trim();
             String value = keyValue[1].replace("\"", "").trim();
-            if (key.equals("options")) {
-                System.out.println("option: " + key + " value: " + Arrays.toString(keyValue));
-            }
+
             // Parse the fields
             switch (key) {
                 case "id":
@@ -149,13 +129,6 @@ public class JsonParser {
             }
         }
         Question q = new Question(id, type, question, options.toArray(new String[0]), answer);
-        System.out.println();
-        System.out.println(Arrays.toString(q.options));
-        if (q.options.length > 0) {
-            System.out.println(q.options[0]);
-        }
-        System.out.println();
-        // Return a new Question object
         return q;
     }
 }
