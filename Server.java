@@ -2,11 +2,66 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+class Question {
+    private String question;
+    private ArrayList<String> options;
+    private int correctOption;
+
+    public Question(String question, ArrayList<String> options, int correctOption) {
+        this.question = question;
+        this.options = options;
+        this.correctOption = correctOption;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public ArrayList<String> getOptions() {
+        return options;
+    }
+
+    public boolean isCorrect(String option) {
+        return option == options.get(correctOption);
+    }
+}
+
 public class Server {
     private static final int PORT = 12345;
     private List<ClientHandler> clients = new ArrayList<>();
 
+    private static final List<Question> questions = new ArrayList<>();
+    private static Scanner sc = new Scanner(System.in);
+
+    private static void generateQuestions() {
+        questions.add(new Question("What is the capital of France?",
+                new ArrayList<>(Arrays.asList("Paris", "London", "Berlin", "Madrid")), 0));
+        questions.add(new Question("What is the capital of Germany?",
+                new ArrayList<>(Arrays.asList("Paris", "London", "Berlin", "Madrid")), 2));
+        questions.add(new Question("What is the capital of Spain?",
+                new ArrayList<>(Arrays.asList("Paris", "London", "Berlin", "Madrid")), 3));
+        questions.add(new Question("What is the capital of England?",
+                new ArrayList<>(Arrays.asList("Paris", "London", "Berlin", "Madrid")), 1));
+    }
+
+    private void askQuestion(){
+        for(Question question : questions){
+            String questionString = question.getQuestion()+" ";
+            ArrayList<String> options = question.getOptions();
+            for (int i = 0; i < options.size(); i++) {
+                questionString += (i + 1) + ". " + options.get(i) + ' ';
+            }
+            broadcastMessage(questionString);
+            try{
+                Thread.sleep(10000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void main(String[] args) {
+        generateQuestions();
         Server server = new Server();
         server.displayServerInfo();
         server.start();
@@ -28,16 +83,19 @@ public class Server {
             // Start a separate thread to send messages to clients
             Thread messageSenderThread = new Thread(() -> {
                 while (true) {
-                    String message = getMessageFromUser();
-                    broadcastMessage(message);
+                    System.out.println("type start to start the quiz");
+                    String message = sc.nextLine();
+                    message = message.toLowerCase().trim();
+                    if(message.equals("start")){
+                        askQuestion();
+                        System.out.println("start the quiz again"); 
+                    }
                 }
             });
             messageSenderThread.start();
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Client connected: " + clientSocket.getInetAddress().getHostAddress());
-
                 // Create a new client handler for the connected client
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 clients.add(clientHandler);
@@ -46,12 +104,6 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private String getMessageFromUser() {
-        System.out.print("Enter message to send to clients: ");
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
     }
 
     public void broadcastMessage(String message) {
