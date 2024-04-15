@@ -10,7 +10,17 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
+        server.displayServerInfo();
         server.start();
+    }
+
+    public void displayServerInfo() {
+        try {
+            InetAddress localhost = InetAddress.getLocalHost();
+            System.out.println("Server running on: " + localhost.getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     public void start() {

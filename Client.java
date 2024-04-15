@@ -6,7 +6,11 @@ import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
-        final String SERVER_ADDRESS = "localhost";
+        Scanner scanner = new Scanner(System.in);
+
+        // Prompt user to enter the server's IP address
+        System.out.print("Enter the server's IP address: ");
+        String SERVER_ADDRESS = scanner.nextLine();
         final int PORT = 12345;
 
         try (Socket socket = new Socket(SERVER_ADDRESS, PORT);
@@ -27,16 +31,16 @@ public class Client {
             messageReceiverThread.start();
 
             // Read user input and send it to the server
-            Scanner scanner = new Scanner(System.in);
             String userInput;
             while ((userInput = scanner.nextLine()) != null) {
                 out.println(userInput);
             }
-            scanner.close();
         } catch (UnknownHostException e) {
             System.err.println("Unknown host: " + SERVER_ADDRESS);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            scanner.close();
         }
     }
 }
