@@ -80,6 +80,9 @@ public class Question implements QuestionTypes {
   public boolean verifyAnswer(String answer) {
     return this.answer.equals(answer);
   }
+  public boolean verifyAnswer(int option) {
+    return this.answer.equals(options[option - 1]);
+  }
 
   public void setId(int id) {
     this.id = id;

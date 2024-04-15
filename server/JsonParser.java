@@ -128,6 +128,11 @@ public class JsonParser {
                     break;
             }
         }
+        if (options.size() == 0) {
+            options = new ArrayList<>();
+            options.add("true");
+            options.add("false");
+        }
         Question q = new Question(id, type, question, options.toArray(new String[0]), answer, duration);
         return q;
     }
