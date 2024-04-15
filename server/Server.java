@@ -1,3 +1,4 @@
+package server;
 
 // Server.java
 import java.io.*;

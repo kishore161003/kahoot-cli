@@ -1,0 +1,74 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "question": "What is the capital of France?",
+      "options": ["Berlin", "Madrid", "Paris", "Rome"],
+      "answer": "Paris"
+    },
+    {
+      "id": 2,
+      "type": "true/false",
+      "question": "The Earth is flat.",
+      "answer": false
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "question": "Which planet is known as the Red Planet?",
+      "options": ["Mars", "Venus", "Jupiter", "Saturn"],
+      "answer": "Mars"
+    },
+    {
+      "id": 4,
+      "type": "true/false",
+      "question": "Water boils at 100°C at sea level.",
+      "answer": true
+    },
+    {
+      "id": 5,
+      "type": "mcq",
+      "question": "Who wrote 'To Kill a Mockingbird'?",
+      "options": ["Harper Lee", "Mark Twain", "J.K. Rowling", "Jane Austen"],
+      "answer": "Harper Lee"
+    },
+    {
+      "id": 6,
+      "type": "true/false",
+      "question": "The Great Wall of China can be seen from space with the naked eye.",
+      "answer": false
+    },
+    {
+      "id": 7,
+      "type": "mcq",
+      "question": "What is the largest ocean on Earth?",
+      "options": [
+        "Indian Ocean",
+        "Arctic Ocean",
+        "Atlantic Ocean",
+        "Pacific Ocean"
+      ],
+      "answer": "Pacific Ocean"
+    },
+    {
+      "id": 8,
+      "type": "true/false",
+      "question": "Shakespeare wrote 'Hamlet'.",
+      "answer": true
+    },
+    {
+      "id": 9,
+      "type": "mcq",
+      "question": "What is the currency of Japan?",
+      "options": ["Yuan", "Won", "Yen", "Baht"],
+      "answer": "Yen"
+    },
+    {
+      "id": 10,
+      "type": "true/false",
+      "question": "Lightning never strikes the same place twice.",
+      "answer": false
+    }
+  ]
+}
