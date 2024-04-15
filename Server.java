@@ -21,8 +21,8 @@ class Question {
         return options;
     }
 
-    public boolean isCorrect(String option) {
-        return option == options.get(correctOption);
+    public boolean isCorrect(int option) {
+        return option == correctOption;
     }
 }
 
@@ -44,20 +44,22 @@ public class Server {
                 new ArrayList<>(Arrays.asList("Paris", "London", "Berlin", "Madrid")), 1));
     }
 
-    private void askQuestion(){
-        for(Question question : questions){
-            String questionString = question.getQuestion()+" ";
+    private void askQuestion() {
+        for (Question question : questions) {
+            String questionString = question.getQuestion() + " ";
             ArrayList<String> options = question.getOptions();
             for (int i = 0; i < options.size(); i++) {
                 questionString += (i + 1) + ". " + options.get(i) + ' ';
             }
             broadcastMessage(questionString);
-            try{
+            try {
                 Thread.sleep(10000);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            checkAnswer(question);
         }
+        displayScores();
     }
 
     public static void main(String[] args) {
@@ -86,9 +88,9 @@ public class Server {
                     System.out.println("type start to start the quiz");
                     String message = sc.nextLine();
                     message = message.toLowerCase().trim();
-                    if(message.equals("start")){
+                    if (message.equals("start")) {
                         askQuestion();
-                        System.out.println("start the quiz again"); 
+                        System.out.println("start the quiz again");
                     }
                 }
             });
@@ -111,12 +113,50 @@ public class Server {
             client.sendMessage(message);
         }
     }
+
+    private void checkAnswer(Question q) {
+        for (ClientHandler client : clients) {
+            try {
+
+                if (q.isCorrect(Integer.parseInt(client.getAnswer()))) {
+                    client.addScore(10);
+                }
+            } catch (Exception e) {
+                System.out.println("Error in checking answer");
+            }
+        }
+    }
+
+    private void displayScores() {
+        for (ClientHandler client : clients) {
+            System.out.println(client.getTeamName() + ": " + client.getScore());
+        }
+    }
 }
 
 class ClientHandler extends Thread {
     private Socket clientSocket;
     private PrintWriter out;
     private String teamName;
+    private int score;
+
+    private String answer ;
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void addScore(int score) {
+        this.score += score;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
 
     public ClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -135,6 +175,7 @@ class ClientHandler extends Thread {
             System.out.println("Team name: " + teamName);
             this.teamName = teamName;
             while ((inputLine = in.readLine()) != null) {
+                this.answer = inputLine;
                 System.out.println("Received from "+teamName+" : " + inputLine);
             }
         } catch (IOException e) {
