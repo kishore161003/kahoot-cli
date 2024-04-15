@@ -60,9 +60,9 @@ public class Client {
                                 try {
                                     Thread.sleep(5000);
                                     if (!sharedData.isSet()) {
+                                        receiveSenderThread.interrupt();
                                         System.out.println("Time out");
                                         out.println("Un answered");
-                                        receiveSenderThread.interrupt();
                                     }
                                     sharedData.clearValue();
                                 } catch (InterruptedException e) {
