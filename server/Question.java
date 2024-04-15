@@ -8,12 +8,58 @@ interface QuestionTypes {
 }
 
 public class Question implements QuestionTypes {
-  int id;
-  String type;
-  String question;
-  String[] options;
-  String answer;
-  int duration;
+  private int id;
+  private String type;
+  private String question;
+  private String[] options;
+  private String answer;
+  private int duration;
+
+  // Getters
+  public int getId() {
+    return id;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public String getQuestion() {
+    return question;
+  }
+
+  public String[] getOptions() {
+    return options;
+  }
+
+  public String getAnswer() {
+    return answer;
+  }
+
+  public int getDuration() {
+    return duration;
+  }
+
+  // Setters
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public void setQuestion(String question) {
+    this.question = question;
+  }
+
+  public void setOptions(String[] options) {
+    this.options = options;
+  }
+
+  public void setAnswer(String answer) {
+    this.answer = answer;
+  }
+
+  public void setDuration(int duration) {
+    this.duration = duration;
+  }
 
   // Constructor
   public Question(int id, String type, String question, String[] options, String answer, int duration) {
@@ -31,6 +77,10 @@ public class Question implements QuestionTypes {
   public Question() {
   }
 
+  public boolean verifyAnswer(String answer) {
+    return this.answer.equals(answer);
+  }
+
   public void setId(int id) {
     this.id = id;
   }
@@ -45,7 +95,6 @@ public class Question implements QuestionTypes {
         + Arrays.toString(Arrays.asList(options).stream().map(option -> "\"" + option + "\"").toArray())
         + ",\"answer\":\"" + answer + "\",\"duration\":" + duration + "}";
   }
-
   // Add getters and setters for the fields as needed
 
   public void readQuestionName() {
@@ -78,9 +127,15 @@ public class Question implements QuestionTypes {
       options = new String[] { "true", "false" };
       return;
     }
-    System.out.println("Enter the options (separated by commas): ");
-    String optionsString = scanner.nextLine();
-    options = optionsString.split(",");
+    System.out.println("Enter number of options: ");
+    int n = scanner.nextInt();
+    scanner.nextLine();
+    options = new String[n];
+    System.out.print("Enter the options: ");
+    for (int i = 0; i < n; i++) {
+      System.out.print((i + 1) + ". ");
+      options[i] = scanner.nextLine().strip();
+    }
   }
 
   public void readAnswerName() {
@@ -105,8 +160,10 @@ public class Question implements QuestionTypes {
       }
       return;
     }
-    System.out.print("Enter the answer: ");
-    answer = scanner.nextLine();
+    System.out.print("Enter the answer from options(" + 1 + " to " + options.length+"):");
+    answer = options[scanner.nextInt()-1];
+    System.out.println("Answer: " + answer);
+    scanner.nextLine();
   }
 
   public void readDuration() {

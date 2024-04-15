@@ -6,18 +6,73 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Quiz {
-  String fileName;
-  Question[] questions;
+  private String fileName;
+  private Question[] questions;
+
+  public String getFileName() {
+    return fileName;
+  }
+
+  public Question[] getQuestions() {
+    return questions;
+  }
+
+  public void setQuestions(Question[] questions) {
+    this.questions = questions;
+  }
 
   public static void main(String[] args) {
     Quiz quiz = new Quiz();
-    quiz.createNewQuiz();
-    // quiz.showExistingQuizFiles();
-    // quiz.chooseFile(false);
+    quiz.displayMenu();
+  }
+
+  public void displayMenu() {
+    Scanner sc = new Scanner(System.in);
+    while (true) {
+      try {
+        System.out.println("Welcome to Quiz Manager");
+        System.out.println("1. Create a new quiz");
+        System.out.println("2. Choose an existing quiz");
+        System.out.println("3. Enter a JSON file path");
+        System.out.println("4. Exit");
+        System.out.print("Enter your choice: ");
+        int choice = sc.nextInt();
+        sc.nextLine();
+        if (choice <= 0 || choice >= 5) {
+          System.out.println("Invalid choice. Please try again.");
+          continue;
+        }
+        switch (choice) {
+          case 1:
+            createNewQuiz();
+            break;
+          case 2:
+            chooseFile(true);
+            break;
+          case 3:
+            System.out.print("Enter the JSON file path: ");
+            String filePath = sc.nextLine();
+            readFromFile(filePath);
+            break;
+          case 4:
+            System.out.println("Exiting...");
+            System.exit(0);
+            break;
+          default:
+            break;
+        }
+        System.out.println("Quiz loaded successfully.");
+        break;
+      } catch (Exception e) {
+        System.out.println("Invalid input. Please try again.");
+        continue;
+      }
+    }
   }
 
   public Quiz(String fileName) {
     this.fileName = fileName;
+    readFromFile();
   }
 
   public Quiz() {
@@ -26,6 +81,15 @@ public class Quiz {
   public void setFileName(String fileName) {
     // Open the file and read the questions
     this.fileName = fileName;
+    readFromFile();
+  }
+
+  public void readFromFile() {
+    this.questions = JsonParser.parseJsonFile("server/questions/" + fileName);
+  }
+
+  public void readFromFile(String filePath) {
+    this.questions = JsonParser.parseJsonFile(filePath);
   }
 
   public void showExistingQuizFiles() {
