@@ -7,17 +7,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import server.RemoveWhitespace;
-
-
 public class JsonParser {
 
     public static void main(String[] args) {
         // Path to the JSON file
-        String filePath = "server/question.json";
+        String filePath = "server/questions/react.json";
 
         // Read and parse the JSON file
         Question[] qrr = parseJsonFile(filePath);
+        System.out.println(Arrays.toString(qrr));
     }
 
     public static Question[] parseJsonFile(String filePath) {
@@ -55,10 +53,8 @@ public class JsonParser {
         // Get the questions array
         String questionsJson = parts[1].substring(1, parts[1].length() - 2).trim();
 
-
         // Split questions array into individual questions
         String[] questionJsons = questionsJson.split("\\},\\{");
-
 
         // Loop through each question
         for (String questionJson : questionJsons) {
@@ -86,6 +82,7 @@ public class JsonParser {
         String type = "";
         String question = "";
         String answer = "";
+        int duration = 0;
 
         // Split the question JSON into fields,
         // "id":1,"type":"mcq","question":"What is the capital of
@@ -126,9 +123,12 @@ public class JsonParser {
                 case "answer":
                     answer = value;
                     break;
+                case "duration":
+                    duration = Integer.parseInt(value);
+                    break;
             }
         }
-        Question q = new Question(id, type, question, options.toArray(new String[0]), answer);
+        Question q = new Question(id, type, question, options.toArray(new String[0]), answer, duration);
         return q;
     }
 }
