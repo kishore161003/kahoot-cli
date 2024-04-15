@@ -1,5 +1,3 @@
-
-// Server.java
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -24,7 +22,7 @@ public class Server {
     }
 
     public void start() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT, 0, InetAddress.getByName("0.0.0.0"))) {
             System.out.println("Server started. Listening on port " + PORT);
 
             // Start a separate thread to send messages to clients
@@ -66,6 +64,7 @@ public class Server {
 class ClientHandler extends Thread {
     private Socket clientSocket;
     private PrintWriter out;
+    private String teamName;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -80,9 +79,11 @@ class ClientHandler extends Thread {
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             String inputLine;
+            String teamName = in.readLine();
+            System.out.println("Team name: " + teamName);
+            this.teamName = teamName;
             while ((inputLine = in.readLine()) != null) {
-                System.out.println("Received from client: " + inputLine);
-                // Handle client input
+                System.out.println("Received from "+teamName+" : " + inputLine);
             }
         } catch (IOException e) {
             e.printStackTrace();
