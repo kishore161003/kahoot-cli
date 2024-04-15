@@ -46,11 +46,12 @@ public class Server {
 
     private void askQuestion() {
         for (Question question : questions) {
-            String questionString = question.getQuestion() + " ";
+            String questionString = question.getQuestion() + "::(";
             ArrayList<String> options = question.getOptions();
             for (int i = 0; i < options.size(); i++) {
-                questionString += (i + 1) + ". " + options.get(i) + ' ';
+                questionString += (i + 1) + ". " + options.get(i) + ':';
             }
+            questionString += ")";
             broadcastMessage(questionString);
             try {
                 Thread.sleep(10000);
