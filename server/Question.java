@@ -40,6 +40,10 @@ public class Question implements QuestionTypes {
     return duration;
   }
 
+  public int getDurationInMillis() {
+    return duration * 1000;
+  }
+
   // Setters
   public void setType(String type) {
     this.type = type;

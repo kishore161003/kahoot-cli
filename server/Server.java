@@ -17,16 +17,17 @@ public class Server {
     private void askQuestion() {
         System.out.println("Asking questions");
         Question[] questions = quiz.getQuestions();
-        for (Question question : questions) {
-            String questionString = question.getQuestion() + " ::";
+        for (int i = 0; i < questions.length; i++) {
+            Question question = questions[i];
+            String questionString = (i + 1) + ". " + question.getQuestion() + " ::";
             String[] options = question.getOptions();
-            for (int i = 0; i < options.length; i++) {
-                questionString += (i + 1) + ". " + options[i] + ',';
+            for (int j = 0; j < options.length; j++) {
+                questionString += (j + 1) + ". " + options[j] + ',';
             }
-            questionString += "::" + question.getDuration();
+            questionString += "::" + question.getDurationInMillis();
             broadcastMessage(questionString);
             try {
-                Thread.sleep(5000);
+                Thread.sleep(question.getDurationInMillis() + 5000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
