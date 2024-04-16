@@ -77,7 +77,7 @@ public class Server {
 
             Thread messageSenderThread = new Thread(() -> {
                 while (true) {
-                    System.out.print("Enter your choice(1/2): ");
+                    System.out.print("Press 1 to start the quiz or 2 to exit.");
                     int message = sc.nextInt();
                     if (message <= 0 || message >= 3) {
                         System.out.println("Invalid choice. Please try again.");
@@ -135,7 +135,7 @@ public class Server {
     }
 
     public void displayScores(int n) {
-        System.out.println("       Leaderboard      ");
+        System.out.println("             Leaderboard              ");
         System.out.println("+-------+-----------------+----------+");
         System.out.println("| S.No. |    Team Name    |  Points  |");
         System.out.println("+-------+-----------------+----------+");
@@ -212,7 +212,8 @@ class ClientHandler extends Thread {
             while (teamName == null || teamName.isEmpty()) {
                 teamName = in.readLine();
             }
-            System.out.println("Team name: " + teamName);
+            System.out.println();
+            System.out.println( teamName+" has joined!!");
             this.teamName = teamName;
             while ((inputLine = in.readLine()) != null) {
                 this.answer = inputLine;

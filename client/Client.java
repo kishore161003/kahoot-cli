@@ -56,29 +56,35 @@ public class Client {
 
                         String[] question = message.split("::");
 
-                        String[] answers = question[1].split(",");
+                        String[] options = question[1].split(",");
                         System.out.println();
                         System.out.println(question[0]);
                         System.out.println();
-                        for (String ans : answers) {
+                        for (String ans : options) {
                             System.out.println(ans);
                         }
                         System.out.println();
                         try {
                             Thread receiveSenderThread = new Thread(() -> {
                                 try {
-                                    int options = answers.length;
-                                    String response = scanner.nextLine();
-                                    while (Integer.parseInt(response) < 1 || Integer.parseInt(response) > options) {
-                                        System.out.println();
-                                        System.out.println("Invalid option Enter again");
-                                        System.out.println();
-                                        response = scanner.nextLine();
+                                    int response = 0;
+                                    while (true) {
+                                        try {
+                                            System.out.print("Enter your response (1-" + options.length + "): ");
+                                            response = scanner.nextInt();
+                                            if (response < 1 || response > options.length) {
+                                                throw new Exception("Invalid option Enter again");
+                                            }
+                                            break;
+                                        } catch (Exception e) {
+                                            System.out.println();
+                                            System.out.println("Invalid option Enter again");
+                                            System.out.println();
+                                        }
                                     }
                                     LocalTime now = LocalTime.now();
                                     Duration duration = Duration.between(start, now);
-
-                                    sharedData.setValue(response);
+                                    sharedData.setValue(response + "");
                                     out.println(response + "::" + duration.getSeconds());
                                 } catch (Exception e) {
                                     sharedData.clearValue();
@@ -97,7 +103,7 @@ public class Client {
                                         Duration duration = Duration.between(start, now);
                                         System.out.println("Time out");
                                         out.println(
-                                                "Un answered" + "::" + duration.getSeconds());
+                                                "0" + "::" + duration.getSeconds());
                                     }
                                     sharedData.clearValue();
                                 } catch (InterruptedException e) {
