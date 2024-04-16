@@ -27,7 +27,10 @@ public class Server {
             questionString += "::" + question.getDurationInMillis();
             broadcastMessage(questionString);
             try {
-                Thread.sleep(question.getDurationInMillis() + 5000);
+                Thread.sleep(question.getDurationInMillis());
+                displayScores();
+                Thread.sleep(5000);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
