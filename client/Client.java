@@ -68,10 +68,11 @@ public class Client {
                             Thread receiveSenderThread = new Thread(() -> {
                                 try {
                                     int options = answers.length;
+                                    System.out.print("Enter your options : ");
                                     String response = scanner.nextLine();
                                     while (Integer.parseInt(response) < 1 || Integer.parseInt(response) > options) {
                                         System.out.println();
-                                        System.out.println("Invalid option Enter again");
+                                        System.out.print("Invalid option Enter again : ");
                                         System.out.println();
                                         response = scanner.nextLine();
                                     }
