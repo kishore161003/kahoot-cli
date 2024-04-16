@@ -1,0 +1,1 @@
+{"questions":[{"id":1,"type":"mcq","question":"what is react?","options":["framework", "library", "server", "waste"],"answer":"library","duration":20},{"id":2,"type":"true/false","question":"React is bad.","options":["true", "false"],"answer":"false","duration":5}]}
