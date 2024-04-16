@@ -5,44 +5,10 @@ import java.net.*;
 import java.util.*;
 
 public class Server {
-    private static final int PORT = 12345;
     private static final int MIN_PORT = 1025;
     private static final int MAX_PORT = 65535;
     private static final Random random = new Random();
     private List<ClientHandler> clients = new ArrayList<>();
-
-    private static final Quiz quiz = new Quiz();
-    private static Scanner sc = new Scanner(System.in);
-
-    private void askQuestion() {
-        System.out.println("Asking questions");
-        Question[] questions = quiz.getQuestions();
-        for (int i = 0; i < questions.length; i++) {
-            Question question = questions[i];
-            String questionString = (i + 1) + ". " + question.getQuestion() + " ::";
-            String[] options = question.getOptions();
-            for (int j = 0; j < options.length; j++) {
-                questionString += (j + 1) + ". " + options[j] + ',';
-            }
-            questionString += "::" + question.getDurationInMillis();
-            broadcastMessage(questionString);
-            try {
-                Thread.sleep(question.getDurationInMillis());
-                displayScores();
-                Thread.sleep(5000);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            checkAnswer(question);
-        }
-        displayScores();
-    }
-
-    public static void main(String[] args) {
-        quiz.displayMenu();
-        displayDashBoard();
-    }
 
     private static void displayDashBoard() {
         displayServerInfo();
@@ -69,6 +35,39 @@ public class Server {
 
     private static int getRandomPort() {
         return random.nextInt(MAX_PORT - MIN_PORT + 1) + MIN_PORT;
+    }
+
+    private static final Quiz quiz = new Quiz();
+    private static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        quiz.displayMenu();
+        displayDashBoard();
+    }
+
+    private void askQuestion() {
+        System.out.println("Asking questions");
+        Question[] questions = quiz.getQuestions();
+        for (int i = 0; i < questions.length; i++) {
+            Question question = questions[i];
+            String questionString = (i + 1) + ". " + question.getQuestion() + " ::";
+            String[] options = question.getOptions();
+            for (int j = 0; j < options.length; j++) {
+                questionString += (j + 1) + ". " + options[j] + ',';
+            }
+            questionString += "::" + question.getDurationInMillis();
+            broadcastMessage(questionString);
+            try {
+                Thread.sleep(question.getDurationInMillis());
+                Thread.sleep(5000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            checkAnswer(question);
+            displayScores();
+        }
+        displayScores();
+        System.exit(0);
     }
 
     public void start() {
@@ -216,7 +215,7 @@ class ClientHandler extends Thread {
                 teamName = in.readLine();
             }
             System.out.println();
-            System.out.println( teamName+" has joined!!");
+            System.out.println(teamName + " has joined!!");
             this.teamName = teamName;
             while ((inputLine = in.readLine()) != null) {
                 this.answer = inputLine;
