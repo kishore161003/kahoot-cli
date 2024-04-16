@@ -44,7 +44,8 @@ public class Server {
     private static void displayDashBoard() {
         displayServerInfo();
         System.out.println("KAHOOT SERVER");
-        System.out.print("Host the quiz(Y/n):");
+        System.out.println("1. Start the quiz");
+        System.out.println("2. Create new quiz");
         String start = sc.nextLine();
         if (start.equalsIgnoreCase("n")) {
             System.exit(0);
@@ -110,12 +111,22 @@ public class Server {
         }
     }
 
+    public int calculateScore(int sec) {
+        final int MAX_SCORE = 1000;
+        final int MIN_SCORE = 100;
+        int score = MAX_SCORE - (sec * ((MAX_SCORE - MIN_SCORE) / 60));
+        score = Math.max(MIN_SCORE, score);
+        return score;
+    }
+
     private void checkAnswer(Question q) {
         for (ClientHandler client : clients) {
             try {
                 System.out.println(client.getAnswer());
-                if (q.verifyAnswer(Integer.parseInt(client.getAnswer().split(":")[0]))) {
-                    client.addScore(10);
+                if (q.verifyAnswer(Integer.parseInt(client.getAnswer().split("::")[0]))) {
+                    int score = calculateScore(Integer.parseInt(client.getAnswer().split("::")[1]));
+                    client.addScore(score);
+                    client.addScoreArray(score);
                 }
             } catch (Exception e) {
                 System.out.println("Error in checking answer");
@@ -123,10 +134,35 @@ public class Server {
         }
     }
 
-    private void displayScores() {
-        for (ClientHandler client : clients) {
-            System.out.println(client.getTeamName() + ": " + client.getScore());
+    public void displayScores(int n) {
+        System.out.println("       Leaderboard      ");
+        System.out.println("+-------+-----------------+----------+");
+        System.out.println("| S.No. |    Team Name    |  Points  |");
+        System.out.println("+-------+-----------------+----------+");
+        // clients.sort(Comparator.comparingInt(ClientHandler::getScore).reversed());
+        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
+
+        int serialNumber = 1;
+        int numberOfEntries = Math.min(clients.size(), n);
+        for (int i = 0; i < numberOfEntries; i++) {
+            ClientHandler client = clients.get(i);
+            System.out.printf("| %-5d | %-15s | %-8d |%n", serialNumber++, client.getTeamName(), client.getScore());
         }
+        System.out.println("+-------+-----------------+----------+");
+    }
+
+    public void displayScores() {
+        System.out.println("       Leaderboard      ");
+        System.out.println("+-------+-----------------+----------+");
+        System.out.println("| S.No. |    Team Name    |  Points  |");
+        System.out.println("+-------+-----------------+----------+");
+        int serialNumber = 1;
+        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
+
+        for (ClientHandler client : clients) {
+            System.out.printf("| %-5d | %-15s | %-8d |%n", serialNumber++, client.getTeamName(), client.getScore());
+        }
+        System.out.println("+-------+-----------------+----------+");
     }
 }
 
@@ -135,6 +171,7 @@ class ClientHandler extends Thread {
     private PrintWriter out;
     private String teamName;
     private int score;
+    private ArrayList<Integer> scores = new ArrayList<>();
 
     private String answer;
 
@@ -148,6 +185,10 @@ class ClientHandler extends Thread {
 
     public void addScore(int score) {
         this.score += score;
+    }
+
+    public void addScoreArray(int score) {
+        scores.add(score);
     }
 
     public String getAnswer() {

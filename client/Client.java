@@ -3,6 +3,7 @@ package client;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+import java.time.Duration;
 import java.time.LocalTime;
 
 class SharedData {
@@ -51,6 +52,8 @@ public class Client {
                     String message;
                     while ((message = in.readLine()) != null) {
                         // System.out.println("Server message: " + message);
+                        LocalTime start = LocalTime.now();
+
                         String[] question = message.split("::");
 
                         String[] answers = question[1].split(",");
@@ -73,9 +76,10 @@ public class Client {
                                         response = scanner.nextLine();
                                     }
                                     LocalTime now = LocalTime.now();
+                                    Duration duration = Duration.between(start, now);
+
                                     sharedData.setValue(response);
-                                    out.println(response + "::" + now.getHour() + ":" + now.getMinute() + ":"
-                                            + now.getSecond());
+                                    out.println(response + "::" + duration.getSeconds());
                                 } catch (Exception e) {
                                     sharedData.clearValue();
                                 }
@@ -90,9 +94,10 @@ public class Client {
                                     if (!sharedData.isSet()) {
                                         receiveSenderThread.interrupt();
                                         LocalTime now = LocalTime.now();
+                                        Duration duration = Duration.between(start, now);
                                         System.out.println("Time out");
-                                        out.println("Un answered" + "::" + now.getHour() + ":" + now.getMinute() + ":"
-                                                + now.getSecond());
+                                        out.println(
+                                                "Un answered" + "::" + duration.getSeconds());
                                     }
                                     sharedData.clearValue();
                                 } catch (InterruptedException e) {
