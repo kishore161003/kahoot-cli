@@ -1,0 +1,219 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "question": "Which of the following is not a principle of Object-Oriented Programming (OOP)?",
+      "options": ["Encapsulation", "Abstraction", "Inheritance", "Algorithm"],
+      "answer": "Algorithm",
+      "duration": 20
+    },
+    {
+      "id": 2,
+      "type": "mcq",
+      "question": "Which keyword is used to prevent inheritance of a class in Java?",
+      "options": ["final", "abstract", "static", "private"],
+      "answer": "final",
+      "duration": 15
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "question": "What is the process of hiding the implementation details and showing only the functionality to the user?",
+      "options": [
+        "Polymorphism",
+        "Abstraction",
+        "Encapsulation",
+        "Inheritance"
+      ],
+      "answer": "Abstraction",
+      "duration": 20
+    },
+    {
+      "id": 4,
+      "type": "mcq",
+      "question": "Which of the following is not a valid access modifier in Java?",
+      "options": ["public", "protected", "friendly", "private"],
+      "answer": "friendly",
+      "duration": 15
+    },
+    {
+      "id": 5,
+      "type": "mcq",
+      "question": "What is the superclass of all classes in Java?",
+      "options": ["Object", "Class", "Super", "Parent"],
+      "answer": "Object",
+      "duration": 20
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "question": "Which method is called when an object is destroyed in Java?",
+      "options": ["destroy()", "finalize()", "dispose()", "end()"],
+      "answer": "finalize()",
+      "duration": 15
+    },
+    {
+      "id": 7,
+      "type": "mcq",
+      "question": "What does the 'static' keyword mean in Java?",
+      "options": [
+        "The variable or method belongs to the class rather than instances of the class",
+        "The variable or method can be accessed only within the same package",
+        "The variable or method can be overridden in subclasses",
+        "The variable or method cannot be accessed outside its class"
+      ],
+      "answer": "The variable or method belongs to the class rather than instances of the class",
+      "duration": 20
+    },
+    {
+      "id": 8,
+      "type": "mcq",
+      "question": "Which of the following is true about method overloading in Java?",
+      "options": [
+        "It occurs when a subclass provides a specific implementation of a method that is already provided by its superclass",
+        "It is also known as compile-time polymorphism",
+        "It involves providing a specific implementation for a method in a subclass",
+        "It requires the overriding of static methods"
+      ],
+      "answer": "It is also known as compile-time polymorphism",
+      "duration": 20
+    },
+    {
+      "id": 9,
+      "type": "mcq",
+      "question": "How would you rate us from 1-4?(Just kidding!! what is the round off value of 4.89?)",
+      "options": ["2", "3", "6", "5"],
+      "answer": "5",
+      "duration": 15
+    },
+    {
+      "id": 10,
+      "type": "mcq",
+      "question": "Which interface must be implemented by all the classes of Java Collections Framework?",
+      "options": ["List", "Set", "Map", "Collection"],
+      "answer": "Collection",
+      "duration": 20
+    },
+    {
+      "id": 11,
+      "type": "mcq",
+      "question": "What is the purpose of the 'super' keyword in Java?",
+      "options": [
+        "To refer to the superclass of the current object",
+        "To call the constructor of the superclass",
+        "To access the static variables and methods of the superclass",
+        "To specify the scope of variables"
+      ],
+      "answer": "To refer to the superclass of the current object",
+      "duration": 20
+    },
+    {
+      "id": 12,
+      "type": "mcq",
+      "question": "What will happen if an abstract class does not have any abstract methods?",
+      "options": [
+        "It cannot have any subclasses",
+        "It can have subclasses but cannot be instantiated",
+        "It will compile without any errors",
+        "It will result in a runtime error"
+      ],
+      "answer": "It can have subclasses but cannot be instantiated",
+      "duration": 20
+    },
+    {
+      "id": 13,
+      "type": "mcq",
+      "question": "Which of the following statements is true about interfaces in Java?",
+      "options": [
+        "An interface can implement another interface",
+        "An interface can extend a class",
+        "An interface can have private methods",
+        "An interface can have instance variables"
+      ],
+      "answer": "An interface can have private methods",
+      "duration": 20
+    },
+    {
+      "id": 14,
+      "type": "mcq",
+      "question": "What is the default value of a boolean variable in Java?",
+      "options": ["true", "false", "0", "null"],
+      "answer": "false",
+      "duration": 15
+    },
+    {
+      "id": 15,
+      "type": "mcq",
+      "question": "Which keyword is used to define a constant in Java?",
+      "options": ["constant", "static", "final", "const"],
+      "answer": "final",
+      "duration": 15
+    },
+    {
+      "id": 16,
+      "type": "mcq",
+      "question": "What is the purpose of the 'this' keyword in Java?",
+      "options": [
+        "To refer to the current instance of the class",
+        "To refer to the superclass of the current class",
+        "To call a method of the same name in the superclass",
+        "To access the static members of the class"
+      ],
+      "answer": "To refer to the current instance of the class",
+      "duration": 20
+    },
+    {
+      "id": 17,
+      "type": "mcq",
+      "question": "Which exception is thrown when an array is accessed with an invalid index?",
+      "options": [
+        "NullPointerException",
+        "ArrayIndexOutOfBoundsException",
+        "ClassCastException",
+        "NumberFormatException"
+      ],
+      "answer": "ArrayIndexOutOfBoundsException",
+      "duration": 20
+    },
+    {
+      "id": 18,
+      "type": "mcq",
+      "question": "What does the 'instanceof' operator do in Java?",
+      "options": [
+        "It checks if an object is of a specified type",
+        "It returns the memory address of an object",
+        "It creates a new instance of a class",
+        "It checks if two objects are of the same type"
+      ],
+      "answer": "It checks if an object is of a specified type",
+      "duration": 20
+    },
+    {
+      "id": 19,
+      "type": "mcq",
+      "question": "Which of the following statements about Java packages is true?",
+      "options": [
+        "A package can only contain classes",
+        "Packages are used for naming conflicts resolution",
+        "Package names correspond to directory structures",
+        "All classes must be in the same package"
+      ],
+      "answer": "Package names correspond to directory structures",
+      "duration": 20
+    },
+    {
+      "id": 20,
+      "type": "mcq",
+      "question": "What is the correct way to declare a static method in Java?",
+      "options": [
+        "static void methodName()",
+        "void static methodName()",
+        "void methodName() static",
+        "methodName() static void"
+      ],
+      "answer": "static void methodName()",
+      "duration": 15
+    }
+  ]
+}
