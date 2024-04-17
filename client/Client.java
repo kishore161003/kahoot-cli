@@ -12,7 +12,7 @@ class SharedData {
 
     public synchronized void setValue(String newValue) {
         isSet = true;
-        value = newValue;   
+        value = newValue;
     }
 
     public synchronized void clearValue() {
@@ -33,7 +33,6 @@ public class Client {
     public static String responseRateMessage(Duration time, String qtime) {
         long seconds = time.getSeconds();
         double ratio = (double) seconds * 1000 / Double.parseDouble(qtime);
-        System.out.println(ratio);
         if (ratio < 0.3) {
             return "Done in a flash";
         } else if (ratio < 0.6) {
