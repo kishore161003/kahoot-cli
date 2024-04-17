@@ -64,6 +64,7 @@ public class Client {
                             System.out.println(ans);
                         }
                         System.out.println();
+
                         try {
                             Thread receiveSenderThread = new Thread(() -> {
                                 try {
@@ -73,7 +74,7 @@ public class Client {
                                     String response = scanner.nextLine();
                                     while (Integer.parseInt(response) < 1 || Integer.parseInt(response) > options) {
                                         System.out.println();
-                                        System.out.print("Invalid option Enter again : ");
+                                        System.out.println("Invalid option Enter again");
                                         System.out.println();
                                         response = scanner.nextLine();
                                     }
@@ -86,6 +87,7 @@ public class Client {
                                     sharedData.clearValue();
                                 }
                             });
+
                             Thread messageSenderThread = new Thread(() -> {
                                 try {
                                     int time = 10000;
@@ -99,7 +101,7 @@ public class Client {
                                         Duration duration = Duration.between(start, now);
                                         System.out.println("Time out");
                                         out.println(
-                                                "Un answered" + "::" + duration.getSeconds());
+                                                "0" + "::" + duration.getSeconds());
                                     }
                                     sharedData.clearValue();
                                 } catch (InterruptedException e) {
@@ -112,8 +114,8 @@ public class Client {
                             System.out.println("Error in sending message");
                         }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println("Exiting...");
                 }
             });
             messageReceiverThread.start();
