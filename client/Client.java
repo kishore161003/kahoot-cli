@@ -30,6 +30,22 @@ class SharedData {
 }
 
 public class Client {
+    public static String responseRateMessage(Duration time) {
+        // System.out.println(time.getSeconds());
+        if (time.getSeconds() < 4) {
+            return "Done in flash";
+        } else if (time.getSeconds() < 8) {
+            return "Bit too swift";
+        } else if (time.getSeconds() < 12) {
+            return "easy peasy";
+        } else if (time.getSeconds() < 16) {
+            return "too late";
+        }
+        else {
+            return "You can do better next time";
+        }
+       
+    }
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -85,6 +101,7 @@ public class Client {
                                     LocalTime now = LocalTime.now();
                                     Duration duration = Duration.between(start, now);
                                     sharedData.setValue(response + "");
+                                    System.out.println("                         "+responseRateMessage(duration)+"           ");
                                     out.println(response + "::" + duration.getSeconds());
                                 } catch (Exception e) {
                                     sharedData.clearValue();

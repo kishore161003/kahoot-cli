@@ -131,6 +131,9 @@ public class Server {
                     client.addScore(score);
                     client.addScoreArray(score);
                 }
+                else {
+                    client.addScoreArray(0);
+                }
             } catch (Exception e) {
                 System.out.println("Error in checking answer");
             }
