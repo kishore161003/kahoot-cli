@@ -69,6 +69,7 @@ public class Client {
                                 try {
                                     int options = answers.length;
                                     System.out.print("Enter your options : ");
+
                                     String response = scanner.nextLine();
                                     while (Integer.parseInt(response) < 1 || Integer.parseInt(response) > options) {
                                         System.out.println();

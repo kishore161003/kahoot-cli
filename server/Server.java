@@ -19,7 +19,8 @@ public class Server {
         Question[] questions = quiz.getQuestions();
         for (int i = 0; i < questions.length; i++) {
             Question question = questions[i];
-            String questionString = (i + 1) + ". " + question.getQuestion() + " ::";
+            String questionString = (i + 1) + ". " + question.getQuestion() + " (" + question.getDuration() + "s )"
+                    + " ::";
             String[] options = question.getOptions();
             for (int j = 0; j < options.length; j++) {
                 questionString += (j + 1) + ". " + options[j] + ',';
@@ -27,16 +28,17 @@ public class Server {
             questionString += "::" + question.getDurationInMillis();
             broadcastMessage(questionString);
             try {
-                Thread.sleep(question.getDurationInMillis());
+                Thread.sleep(question.getDurationInMillis() + 2000);
+                checkAnswer(question);
                 displayScores();
                 Thread.sleep(5000);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            checkAnswer(question);
         }
-        displayScores();
+
+        displayScores(3);
     }
 
     public static void main(String[] args) {
@@ -138,34 +140,28 @@ public class Server {
     }
 
     public void displayScores(int n) {
-        System.out.println("       Leaderboard      ");
-        System.out.println("+-------+-----------------+----------+");
-        System.out.println("| S.No. |    Team Name    |  Points  |");
-        System.out.println("+-------+-----------------+----------+");
-        // clients.sort(Comparator.comparingInt(ClientHandler::getScore).reversed());
-        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
-
+        StringBuilder leaderboard = new StringBuilder();
+        leaderboard.append(n <= 3 ? "           Podium      \n" : "           Leaderboard      \n");
+        leaderboard.append("+-------+-----------------+----------+\n");
+        leaderboard.append("| S.No. |    Team Name    |  Points  |\n");
+        leaderboard.append("+-------+-----------------+----------+\n");
         int serialNumber = 1;
-        int numberOfEntries = Math.min(clients.size(), n);
+        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
+        int numberOfEntries = Math.min(n, clients.size());
         for (int i = 0; i < numberOfEntries; i++) {
             ClientHandler client = clients.get(i);
-            System.out.printf("| %-5d | %-15s | %-8d |%n", serialNumber++, client.getTeamName(), client.getScore());
+            String score = String.format("| %-5d | %-15s | %-8d |\n", serialNumber++, client.getTeamName(),
+                    client.getScore());
+            leaderboard.append(score);
         }
-        System.out.println("+-------+-----------------+----------+");
+        leaderboard.append("+-------+-----------------+----------+\n");
+        String leaderboardString = leaderboard.toString();
+        System.out.println(leaderboardString);
+        // broadcastMessage(leaderboardString);
     }
 
     public void displayScores() {
-        System.out.println("       Leaderboard      ");
-        System.out.println("+-------+-----------------+----------+");
-        System.out.println("| S.No. |    Team Name    |  Points  |");
-        System.out.println("+-------+-----------------+----------+");
-        int serialNumber = 1;
-        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
-
-        for (ClientHandler client : clients) {
-            System.out.printf("| %-5d | %-15s | %-8d |%n", serialNumber++, client.getTeamName(), client.getScore());
-        }
-        System.out.println("+-------+-----------------+----------+");
+        displayScores(clients.size());
     }
 }
 
