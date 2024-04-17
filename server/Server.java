@@ -9,6 +9,43 @@ public class Server {
     private static final int MAX_PORT = 65535;
     private static final Random random = new Random();
     private List<ClientHandler> clients = new ArrayList<>();
+
+    private static final Quiz quiz = new Quiz();
+    private static Scanner sc = new Scanner(System.in);
+
+    private void askQuestion() {
+        System.out.println("Asking questions");
+        Question[] questions = quiz.getQuestions();
+        for (int i = 0; i < questions.length; i++) {
+            Question question = questions[i];
+            String questionString = (i + 1) + ". " + question.getQuestion() + " (" + question.getDuration() + "s)"
+                    + " ::";
+            String[] options = question.getOptions();
+            for (int j = 0; j < options.length; j++) {
+                questionString += (j + 1) + ". " + options[j] + ',';
+            }
+            questionString += "::" + question.getDurationInMillis();
+            broadcastMessage(questionString);
+            try {
+                Thread.sleep(question.getDurationInMillis() + 2000);
+                checkAnswer(question);
+                displayScores();
+                sendMessageToClients(3, "You're on the podium");
+                Thread.sleep(5000);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        displayScores(3);
+        finalDisplayScore();
+        broadcastMessage("end::The quiz has ended. Thank you for participating.");
+        for (ClientHandler client : clients) {
+            client.disconnect();
+        }
+    }
+
     public static void main(String[] args) {
         quiz.displayMenu();
         displayDashBoard();
@@ -27,7 +64,7 @@ public class Server {
             server.start();
         }
     }
-    
+
     public static void displayServerInfo() {
         try {
             InetAddress localhost = InetAddress.getLocalHost();
@@ -39,35 +76,6 @@ public class Server {
 
     private static int getRandomPort() {
         return random.nextInt(MAX_PORT - MIN_PORT + 1) + MIN_PORT;
-    }
-
-    private static final Quiz quiz = new Quiz();
-    private static Scanner sc = new Scanner(System.in);
-
-
-    private void askQuestion() {
-        System.out.println("Asking questions");
-        Question[] questions = quiz.getQuestions();
-        for (int i = 0; i < questions.length; i++) {
-            Question question = questions[i];
-            String questionString = (i + 1) + ". " + question.getQuestion() + " ::";
-            String[] options = question.getOptions();
-            for (int j = 0; j < options.length; j++) {
-                questionString += (j + 1) + ". " + options[j] + ',';
-            }
-            questionString += "::" + question.getDurationInMillis();
-            broadcastMessage(questionString);
-            try {
-                Thread.sleep(question.getDurationInMillis());
-                Thread.sleep(5000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            checkAnswer(question);
-            displayScores();
-        }
-        displayScores();
-        System.exit(0);
     }
 
     public void start() {
@@ -100,6 +108,11 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 clients.add(clientHandler);
                 clientHandler.start();
+                clients.removeIf(client -> client.isClosed());
+                if (clients.size() == 0) {
+                    System.out.println("No clients connected. Exiting...");
+                    System.exit(0);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -110,6 +123,10 @@ public class Server {
         for (ClientHandler client : clients) {
             client.sendMessage(message);
         }
+    }
+
+    public void sendMessage(ClientHandler client, String message) {
+        client.sendMessage(message);
     }
 
     public int calculateScore(int sec) {
@@ -128,6 +145,8 @@ public class Server {
                     int score = calculateScore(Integer.parseInt(client.getAnswer().split("::")[1]));
                     client.addScore(score);
                     client.addScoreArray(score);
+                } else {
+                    client.addScoreArray(0);
                 }
             } catch (Exception e) {
                 System.out.println("Error in checking answer");
@@ -135,35 +154,97 @@ public class Server {
         }
     }
 
-    public void displayScores(int n) {
-        System.out.println("             Leaderboard              ");
-        System.out.println("+-------+-----------------+----------+");
-        System.out.println("| S.No. |    Team Name    |  Points  |");
-        System.out.println("+-------+-----------------+----------+");
-        // clients.sort(Comparator.comparingInt(ClientHandler::getScore).reversed());
+    public void sendMessageToClients(int n, String message) {
         Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
-
-        int serialNumber = 1;
-        int numberOfEntries = Math.min(clients.size(), n);
+        int numberOfEntries = Math.min(n, clients.size());
         for (int i = 0; i < numberOfEntries; i++) {
             ClientHandler client = clients.get(i);
-            System.out.printf("| %-5d | %-15s | %-8d |%n", serialNumber++, client.getTeamName(), client.getScore());
+            // send message to client
+            sendMessage(client, "message::" + message);
         }
-        System.out.println("+-------+-----------------+----------+");
     }
 
-    public void displayScores() {
-        System.out.println("       Leaderboard      ");
-        System.out.println("+-------+-----------------+----------+");
-        System.out.println("| S.No. |    Team Name    |  Points  |");
-        System.out.println("+-------+-----------------+----------+");
+    public void displayScores(int n) {
+        StringBuilder leaderboard = new StringBuilder();
+        leaderboard.append(n <= 3 ? "           Podium      \n" : "           Leaderboard      \n");
+        leaderboard.append("+-------+-----------------+----------+\n");
+        leaderboard.append("| S.No. |    Team Name    |  Points  |\n");
+        leaderboard.append("+-------+-----------------+----------+\n");
+        int serialNumber = 1;
+        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
+        int numberOfEntries = Math.min(n, clients.size());
+        for (int i = 0; i < numberOfEntries; i++) {
+            ClientHandler client = clients.get(i);
+            String score = String.format("| %-5d | %-15s | %-8d |\n", serialNumber++, client.getTeamName(),
+                    client.getScore());
+            leaderboard.append(score);
+        }
+        leaderboard.append("+-------+-----------------+----------+\n");
+        String leaderboardString = leaderboard.toString();
+        System.out.println(leaderboardString);
+        String clientarr[] = leaderboardString.split("\n");
+        for (String scores : clientarr) {
+            broadcastMessage("score::" + scores);
+        }
+        // broadcastMessage("score::" + leaderboardString);
+    }
+
+    public void finalDisplayScore() {
+        StringBuilder leaderboard = new StringBuilder();
+        leaderboard.append("           Leaderboard       \n");
+        leaderboard.append("+-------+-----------------+");
+
+        int numberofQuestions = quiz.getQuestions().length;
+
+        for (int i = 1; i <= numberofQuestions; i++) {
+            leaderboard.append("----------+");
+        }
+        leaderboard.append("----------+\n");
+        leaderboard.append("| S.No. |    Team Name    |");
+        for (int i = 1; i <= numberofQuestions; i++) {
+            leaderboard.append(String.format("   Q%d     |", i));
+        }
+        leaderboard.append("   Total  |\n");
+
+        leaderboard.append("+-------+-----------------+");
+
+        for (int i = 0; i <= numberofQuestions; i++) {
+            leaderboard.append("----------+");
+        }
+        leaderboard.append("\n");
+
         int serialNumber = 1;
         Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
 
         for (ClientHandler client : clients) {
-            System.out.printf("| %-5d | %-15s | %-8d |%n", serialNumber++, client.getTeamName(), client.getScore());
+            String teamName = client.getTeamName();
+            int totalScore = client.getScore();
+            ArrayList<Integer> scores = client.getScoreArray();
+
+            StringBuilder scoresString = new StringBuilder();
+            for (int score : scores) {
+                scoresString.append(String.format(" %-8d |", score));
+            }
+            scoresString.append(String.format(" %-8d |", totalScore));
+
+            String scoreLine = String.format("| %-5d | %-15s |%s", serialNumber++, teamName, scoresString);
+            leaderboard.append(scoreLine);
+            leaderboard.append("\n");
+            leaderboard.append("+-------+-----------------+");
+            for (int i = 0; i <= numberofQuestions; i++) {
+                leaderboard.append("----------+");
+            }
         }
-        System.out.println("+-------+-----------------+----------+");
+        // Adding footer line
+
+        // leaderboard.append("\n");
+
+        String leaderboardString = leaderboard.toString();
+        System.out.println(leaderboardString);
+    }
+
+    public void displayScores() {
+        displayScores(clients.size());
     }
 }
 
@@ -192,8 +273,26 @@ class ClientHandler extends Thread {
         scores.add(score);
     }
 
+    public ArrayList<Integer> getScoreArray() {
+        return scores;
+    }
+
     public String getAnswer() {
         return answer;
+    }
+
+    public Socket getSocket() {
+        return clientSocket;
+    }
+
+    public boolean isClosed() {
+        if (clientSocket.isClosed()) {
+            try {
+                out.close();
+            } catch (Exception e) {
+            }
+        }
+        return clientSocket.isClosed();
     }
 
     public ClientHandler(Socket clientSocket) {
@@ -201,6 +300,15 @@ class ClientHandler extends Thread {
         try {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect() {
+        try {
+            out.close();
+            clientSocket.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -218,10 +326,13 @@ class ClientHandler extends Thread {
             this.teamName = teamName;
             while ((inputLine = in.readLine()) != null) {
                 this.answer = inputLine;
-                System.out.println("Received from " + teamName + " : " + inputLine);
+                System.out.println("Received from " + teamName);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            if (this.isClosed()) {
+                System.out.println(teamName + " has disconnected");
+            } else
+                e.printStackTrace();
         }
     }
 
