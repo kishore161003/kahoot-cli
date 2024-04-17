@@ -113,7 +113,7 @@ public class Client {
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("Exited");
+                    System.out.println("Exiting...");
                 }
             });
             messageReceiverThread.start();

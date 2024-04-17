@@ -9,6 +9,10 @@ public class Server {
     private static final int MAX_PORT = 65535;
     private static final Random random = new Random();
     private List<ClientHandler> clients = new ArrayList<>();
+    public static void main(String[] args) {
+        quiz.displayMenu();
+        displayDashBoard();
+    }
 
     private static void displayDashBoard() {
         displayServerInfo();
@@ -23,7 +27,7 @@ public class Server {
             server.start();
         }
     }
-
+    
     public static void displayServerInfo() {
         try {
             InetAddress localhost = InetAddress.getLocalHost();
@@ -40,10 +44,6 @@ public class Server {
     private static final Quiz quiz = new Quiz();
     private static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) {
-        quiz.displayMenu();
-        displayDashBoard();
-    }
 
     private void askQuestion() {
         System.out.println("Asking questions");
@@ -87,7 +87,6 @@ public class Server {
                     }
                     if (message == 1) {
                         askQuestion();
-                        System.out.println("start the quiz again");
                     } else {
                         System.exit(0);
                     }
