@@ -38,6 +38,7 @@ public class Server {
         }
 
         displayScores(3);
+        finalDisplayScore();
     }
 
     public static void main(String[] args) {
@@ -161,6 +162,62 @@ public class Server {
         // broadcastMessage(leaderboardString);
     }
 
+    public void finalDisplayScore() {
+        StringBuilder leaderboard = new StringBuilder();
+        leaderboard.append("           Leaderboard       \n");
+        leaderboard.append("+-------+-----------------+");
+        
+        
+        
+        int numberofQuestions = quiz.getQuestions().length;
+        
+        for (int i = 1; i <= numberofQuestions; i++) {
+            leaderboard.append("----------+");
+        }
+        leaderboard.append("----------+\n");
+        leaderboard.append("| S.No. |    Team Name    |");
+        for (int i = 1; i <= numberofQuestions; i++) {
+            leaderboard.append(String.format("   Q%d     |", i));
+        }
+        leaderboard.append("   Total  |\n"); 
+       
+        leaderboard.append("+-------+-----------------+");
+
+        for (int i = 0; i <= numberofQuestions; i++) {
+            leaderboard.append("----------+");
+        }
+        leaderboard.append("\n");
+    
+        int serialNumber = 1;
+        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
+
+        for (ClientHandler client : clients) {
+            String teamName = client.getTeamName();
+            int totalScore = client.getScore();
+            ArrayList<Integer> scores = client.getScoreArray();
+            
+            StringBuilder scoresString = new StringBuilder();
+            for (int score : scores) {
+                scoresString.append(String.format(" %-8d |", score));
+            }
+            scoresString.append(String.format(" %-8d |", totalScore));
+            
+            String scoreLine = String.format("| %-5d | %-15s |%s", serialNumber++, teamName, scoresString);
+            leaderboard.append(scoreLine);
+            leaderboard.append("\n");
+            leaderboard.append("+-------+-----------------+");
+            for (int i = 0; i <= numberofQuestions; i++) {
+                leaderboard.append("----------+");
+            }
+        }
+        // Adding footer line
+       
+        // leaderboard.append("\n");
+        
+        String leaderboardString = leaderboard.toString();
+        System.out.println(leaderboardString);
+    }
+    
     public void displayScores() {
         displayScores(clients.size());
     }
@@ -189,6 +246,9 @@ class ClientHandler extends Thread {
 
     public void addScoreArray(int score) {
         scores.add(score);
+    }
+    public ArrayList<Integer> getScoreArray() {
+        return scores;
     }
 
     public String getAnswer() {
