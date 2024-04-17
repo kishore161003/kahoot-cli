@@ -38,6 +38,9 @@ public class Server {
         }
 
         displayScores(3);
+        for (ClientHandler client : clients) {
+            client.disconnect();
+        }
     }
 
     public static void main(String[] args) {
@@ -58,7 +61,7 @@ public class Server {
             server.start();
         }
     }
-    
+
     public static void displayServerInfo() {
         try {
             InetAddress localhost = InetAddress.getLocalHost();
@@ -102,6 +105,7 @@ public class Server {
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 clients.add(clientHandler);
                 clientHandler.start();
+                clients.removeIf(client -> client.isClosed());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -130,8 +134,7 @@ public class Server {
                     int score = calculateScore(Integer.parseInt(client.getAnswer().split("::")[1]));
                     client.addScore(score);
                     client.addScoreArray(score);
-                }
-                else {
+                } else {
                     client.addScoreArray(0);
                 }
             } catch (Exception e) {
@@ -195,11 +198,34 @@ class ClientHandler extends Thread {
         return answer;
     }
 
+    public Socket getSocket() {
+        return clientSocket;
+    }
+
+    public boolean isClosed() {
+        if (clientSocket.isClosed()) {
+            try {
+                out.close();
+            } catch (Exception e) {
+            }
+        }
+        return clientSocket.isClosed();
+    }
+
     public ClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
         try {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect() {
+        try {
+            out.close();
+            clientSocket.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -217,7 +243,7 @@ class ClientHandler extends Thread {
             this.teamName = teamName;
             while ((inputLine = in.readLine()) != null) {
                 this.answer = inputLine;
-                System.out.println("Received from " + teamName + " : " + inputLine);
+                System.out.println("Received from " + teamName);
             }
         } catch (IOException e) {
             e.printStackTrace();
