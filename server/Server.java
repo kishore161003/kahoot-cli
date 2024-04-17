@@ -18,7 +18,7 @@ public class Server {
         Question[] questions = quiz.getQuestions();
         for (int i = 0; i < questions.length; i++) {
             Question question = questions[i];
-            String questionString = (i + 1) + ". " + question.getQuestion() + " (" + question.getDuration() + "s )"
+            String questionString = (i + 1) + ". " + question.getQuestion() + " (" + question.getDuration() + "s)"
                     + " ::";
             String[] options = question.getOptions();
             for (int j = 0; j < options.length; j++) {
@@ -30,6 +30,7 @@ public class Server {
                 Thread.sleep(question.getDurationInMillis() + 2000);
                 checkAnswer(question);
                 displayScores();
+                sendMessageToClients(3, "You're on the podium");
                 Thread.sleep(5000);
 
             } catch (Exception e) {
@@ -38,6 +39,7 @@ public class Server {
         }
 
         displayScores(3);
+        broadcastMessage("end::The quiz has ended. Thank you for participating.");
         for (ClientHandler client : clients) {
             client.disconnect();
         }
@@ -106,6 +108,10 @@ public class Server {
                 clients.add(clientHandler);
                 clientHandler.start();
                 clients.removeIf(client -> client.isClosed());
+                if (clients.size() == 0) {
+                    System.out.println("No clients connected. Exiting...");
+                    System.exit(0);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,6 +122,10 @@ public class Server {
         for (ClientHandler client : clients) {
             client.sendMessage(message);
         }
+    }
+
+    public void sendMessage(ClientHandler client, String message) {
+        client.sendMessage(message);
     }
 
     public int calculateScore(int sec) {
@@ -143,6 +153,16 @@ public class Server {
         }
     }
 
+    public void sendMessageToClients(int n, String message) {
+        Collections.sort(clients, Comparator.comparingInt(ClientHandler::getScore).reversed());
+        int numberOfEntries = Math.min(n, clients.size());
+        for (int i = 0; i < numberOfEntries; i++) {
+            ClientHandler client = clients.get(i);
+            // send message to client
+            sendMessage(client, "message::" + message);
+        }
+    }
+
     public void displayScores(int n) {
         StringBuilder leaderboard = new StringBuilder();
         leaderboard.append(n <= 3 ? "           Podium      \n" : "           Leaderboard      \n");
@@ -161,7 +181,11 @@ public class Server {
         leaderboard.append("+-------+-----------------+----------+\n");
         String leaderboardString = leaderboard.toString();
         System.out.println(leaderboardString);
-        // broadcastMessage(leaderboardString);
+        String clientarr[] = leaderboardString.split("\n");
+        for (String scores : clientarr) {
+            broadcastMessage("score::" + scores);
+        }
+        // broadcastMessage("score::" + leaderboardString);
     }
 
     public void displayScores() {
@@ -246,7 +270,10 @@ class ClientHandler extends Thread {
                 System.out.println("Received from " + teamName);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            if (this.isClosed()) {
+                System.out.println(teamName + " has disconnected");
+            } else
+                e.printStackTrace();
         }
     }
 
