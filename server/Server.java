@@ -234,10 +234,10 @@ public class Server {
             for (int i = 0; i <= numberofQuestions; i++) {
                 leaderboard.append("----------+");
             }
+            leaderboard.append("\n");
         }
         // Adding footer line
 
-        // leaderboard.append("\n");
 
         String leaderboardString = leaderboard.toString();
         System.out.println(leaderboardString);

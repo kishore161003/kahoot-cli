@@ -1,0 +1,1 @@
+{"questions":[{"id":1,"type":"mcq","question":"Which of the following is not a valid keyword in Java?","options":["interface", "unsigned", "native", "synchronized"],"answer":"native","duration":10},{"id":2,"type":"true/false","question":"Is java an OOP?","options":["true", "false"],"answer":"true","duration":5}]}
