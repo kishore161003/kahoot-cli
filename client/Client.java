@@ -32,7 +32,7 @@ class SharedData {
 public class Client {
     public static String responseRateMessage(Duration time, String qtime) {
         long seconds = time.getSeconds();
-        double ratio =(double) seconds * 1000 / Double.parseDouble(qtime);
+        double ratio = (double) seconds * 1000 / Double.parseDouble(qtime);
         System.out.println(ratio);
         if (ratio < 0.3) {
             return "Done in a flash";
@@ -46,7 +46,7 @@ public class Client {
             return "Too slow, you can do better next time";
         }
     }
-    
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -72,6 +72,22 @@ public class Client {
                         LocalTime start = LocalTime.now();
 
                         String[] question = message.split("::");
+                        if (question[0].equals("score")) {
+                            System.out.println(question[1]);
+                            continue;
+                        } else if (question[0].equals("end")) {
+                            System.out.println(question[1]);
+                            System.out.println();
+                            break;
+                        } else if (question[0].equals("error")) {
+                            System.out.println("Error: " + question[1]);
+                            System.out.println();
+                            break;
+                        } else if (question[0].equals("message")) {
+                            System.out.println(String.format("\t\t %s \t\t", question[1]));
+                            System.out.println();
+                            continue;
+                        }
 
                         String[] answers = question[1].split(",");
                         System.out.println();
@@ -98,7 +114,9 @@ public class Client {
                                     LocalTime now = LocalTime.now();
                                     Duration duration = Duration.between(start, now);
                                     sharedData.setValue(response + "");
-                                    System.out.println("                         "+responseRateMessage(duration,question[question.length - 1])+"           ");
+                                    System.out.println("                         "
+                                            + responseRateMessage(duration, question[question.length - 1])
+                                            + "           ");
                                     out.println(response + "::" + duration.getSeconds());
                                 } catch (Exception e) {
                                     sharedData.clearValue();
