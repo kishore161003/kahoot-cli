@@ -72,31 +72,27 @@ public class Client {
 
                         String[] question = message.split("::");
 
-                        String[] options = question[1].split(",");
+                        String[] answers = question[1].split(",");
                         System.out.println();
                         System.out.println(question[0]);
                         System.out.println();
-                        for (String ans : options) {
+                        for (String ans : answers) {
                             System.out.println(ans);
                         }
                         System.out.println();
+
                         try {
                             Thread receiveSenderThread = new Thread(() -> {
                                 try {
-                                    int response = 0;
-                                    while (true) {
-                                        try {
-                                            System.out.print("Enter your response (1-" + options.length + "): ");
-                                            response = scanner.nextInt();
-                                            if (response < 1 || response > options.length) {
-                                                throw new Exception("Invalid option Enter again");
-                                            }
-                                            break;
-                                        } catch (Exception e) {
-                                            System.out.println();
-                                            System.out.println("Invalid option Enter again");
-                                            System.out.println();
-                                        }
+                                    int options = answers.length;
+                                    System.out.print("Enter your options : ");
+
+                                    String response = scanner.nextLine();
+                                    while (Integer.parseInt(response) < 1 || Integer.parseInt(response) > options) {
+                                        System.out.println();
+                                        System.out.println("Invalid option Enter again");
+                                        System.out.println();
+                                        response = scanner.nextLine();
                                     }
                                     LocalTime now = LocalTime.now();
                                     Duration duration = Duration.between(start, now);
@@ -107,6 +103,7 @@ public class Client {
                                     sharedData.clearValue();
                                 }
                             });
+
                             Thread messageSenderThread = new Thread(() -> {
                                 try {
                                     int time = 10000;
@@ -133,8 +130,8 @@ public class Client {
                             System.out.println("Error in sending message");
                         }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println("Exiting...");
                 }
             });
             messageReceiverThread.start();
