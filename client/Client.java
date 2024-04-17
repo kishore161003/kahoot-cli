@@ -12,7 +12,7 @@ class SharedData {
 
     public synchronized void setValue(String newValue) {
         isSet = true;
-        value = newValue;
+        value = newValue;   
     }
 
     public synchronized void clearValue() {
